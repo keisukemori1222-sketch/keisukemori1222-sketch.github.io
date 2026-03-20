@@ -8,44 +8,55 @@
   <link href="https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@400;700&family=Noto+Sans+JP:wght@300;400;500;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
   <style>
     :root {
-      --ink-deep: #0a0e1a;
-      --ink-mid: #141b2d;
-      --ink-light: #1e2740;
-      --indigo: #2d3a6e;
-      --indigo-soft: #4a5a99;
-      --gold: #c4a265;
-      --gold-light: #dfc799;
-      --gold-dim: rgba(196, 162, 101, 0.15);
-      --washi: #f5f0e8;
-      --washi-dark: #e8e0d0;
-      --text-light: #d4cfc5;
+      /* ベース：温かみのあるオフホワイト系 */
+      --bg-hero: #1a1f2e;
+      --bg-hero-mid: #2a3042;
+      --bg-warm-white: #f7f4f0;
+      --bg-warm-light: #f0ece6;
+      --bg-warm-cream: #e8e2d8;
+      --bg-section-alt: #faf8f5;
+
+      /* テキスト */
+      --text-primary: #1a1a1a;
+      --text-secondary: #4a4540;
       --text-muted: #8a8578;
-      --text-dark: #2c2820;
+      --text-on-dark: #f0ece6;
+      --text-on-dark-muted: #b0a898;
+
+      /* アクセント：キャメル〜琥珀系 */
+      --camel: #b8864e;
+      --camel-light: #d4a76a;
+      --camel-warm: #c4956a;
+      --camel-dim: rgba(184, 134, 78, 0.12);
+      --camel-border: rgba(184, 134, 78, 0.3);
+
+      /* ユーティリティ */
+      --gold-star: rgba(212, 167, 106, 0.6);
+      --ink-deep: #0a0e1a;
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
-
     html { scroll-behavior: smooth; }
 
     body {
       font-family: 'Noto Sans JP', sans-serif;
-      background-color: var(--ink-deep);
-      color: var(--text-light);
+      background-color: var(--bg-warm-white);
+      color: var(--text-primary);
       font-weight: 300;
-      line-height: 1.8;
+      line-height: 2.0;
       overflow-x: hidden;
     }
 
-    /* Canvas starfield */
+    /* ===== CANVAS STARFIELD (Hero only) ===== */
     #starfield {
-      position: fixed;
+      position: absolute;
       top: 0; left: 0;
       width: 100%; height: 100%;
       z-index: 0;
       pointer-events: none;
     }
 
-    /* NAV */
+    /* ===== NAVIGATION ===== */
     nav {
       position: fixed;
       top: 0; left: 0; right: 0;
@@ -58,17 +69,21 @@
     }
 
     nav.scrolled {
-      background: rgba(10, 14, 26, 0.85);
+      background: rgba(247, 244, 240, 0.92);
       backdrop-filter: blur(12px);
+      box-shadow: 0 1px 0 var(--camel-border);
     }
 
     .nav-logo {
       font-family: 'Zen Old Mincho', serif;
       font-size: 1.5rem;
-      color: var(--gold);
+      color: var(--text-on-dark);
       text-decoration: none;
       letter-spacing: 0.1em;
+      transition: color 0.4s;
     }
+
+    nav.scrolled .nav-logo { color: var(--camel); }
 
     .nav-links {
       display: flex;
@@ -78,13 +93,14 @@
 
     .nav-links a {
       font-size: 0.85rem;
-      color: var(--text-light);
+      color: var(--text-on-dark-muted);
       text-decoration: none;
       letter-spacing: 0.12em;
       transition: color 0.3s;
     }
 
-    .nav-links a:hover { color: var(--gold); }
+    nav.scrolled .nav-links a { color: var(--text-secondary); }
+    .nav-links a:hover { color: var(--camel) !important; }
 
     .hamburger {
       display: none;
@@ -98,504 +114,83 @@
       display: block;
       width: 24px;
       height: 1.5px;
-      background: var(--gold);
-      transition: all 0.3s;
+      background: var(--text-on-dark);
+      transition: background 0.4s;
     }
 
-    /* SECTIONS */
-    section {
-      position: relative;
-      z-index: 1;
-    }
+    nav.scrolled .hamburger span { background: var(--text-primary); }
 
-    /* HERO */
-    #hero {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 120px 40px 100px;
-      background: radial-gradient(ellipse 80% 60% at 50% 40%, rgba(45, 58, 110, 0.5) 0%, transparent 70%),
-                  radial-gradient(ellipse 50% 40% at 30% 60%, rgba(74, 90, 153, 0.2) 0%, transparent 60%);
-    }
-
-    .hero-inner { max-width: 800px; }
-
-    .hero-yomi {
-      font-family: 'Noto Sans JP', sans-serif;
-      font-size: 0.8rem;
-      letter-spacing: 0.4em;
-      color: var(--text-muted);
-      margin-bottom: 24px;
-    }
-
-    .hero-name {
-      font-family: 'Zen Old Mincho', serif;
-      font-size: clamp(3rem, 8vw, 5.5rem);
-      color: var(--washi);
-      letter-spacing: 0.15em;
-      line-height: 1.2;
-      margin-bottom: 16px;
-    }
-
-    .hero-title-en {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1rem;
-      letter-spacing: 0.3em;
-      color: var(--gold);
-      margin-bottom: 60px;
-    }
-
-    .hero-divider {
-      width: 1px;
-      height: 60px;
-      background: linear-gradient(to bottom, transparent, var(--gold), transparent);
-      margin: 0 auto 60px;
-    }
-
-    .hero-catch {
-      font-family: 'Zen Old Mincho', serif;
-      font-size: clamp(1.5rem, 4vw, 2.4rem);
-      color: var(--washi);
-      letter-spacing: 0.08em;
-      line-height: 1.5;
-      margin-bottom: 24px;
-    }
-
-    .hero-sub {
-      font-size: 1rem;
-      color: var(--text-muted);
-      letter-spacing: 0.05em;
-      line-height: 2;
-      margin-bottom: 60px;
-    }
-
-    .scroll-hint {
-      display: flex;
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(247, 244, 240, 0.97);
+      z-index: 99;
       flex-direction: column;
       align-items: center;
-      gap: 8px;
-      margin-top: 40px;
+      justify-content: center;
+      gap: 40px;
     }
 
-    .scroll-hint span {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 0.75rem;
-      letter-spacing: 0.3em;
-      color: var(--text-muted);
+    .mobile-menu.open { display: flex; }
+
+    .mobile-menu a {
+      font-family: 'Zen Old Mincho', serif;
+      font-size: 1.4rem;
+      color: var(--text-primary);
+      text-decoration: none;
+      letter-spacing: 0.15em;
     }
 
-    .scroll-line {
-      width: 1px;
-      height: 50px;
-      background: linear-gradient(to bottom, var(--gold), transparent);
-      animation: scrollDown 1.8s infinite;
+    .mobile-menu-close {
+      position: absolute;
+      top: 24px; right: 60px;
+      font-size: 1.8rem;
+      cursor: pointer;
+      color: var(--text-secondary);
     }
 
-    @keyframes scrollDown {
-      0% { opacity: 1; transform: scaleY(1); transform-origin: top; }
-      100% { opacity: 0; transform: scaleY(0); transform-origin: top; }
+    /* ===== SECTION BASE ===== */
+    section {
+      position: relative;
+      padding: 120px 60px;
     }
 
-    /* SECTION COMMON */
     .section-inner {
-      max-width: 900px;
+      max-width: 1000px;
       margin: 0 auto;
-      padding: 100px 40px;
     }
 
     .section-label {
       font-family: 'Cormorant Garamond', serif;
-      font-size: 0.8rem;
-      letter-spacing: 0.4em;
-      color: var(--gold);
+      font-size: 0.78rem;
+      letter-spacing: 0.3em;
+      color: var(--camel);
       display: block;
       margin-bottom: 16px;
     }
 
     .section-title {
       font-family: 'Zen Old Mincho', serif;
-      font-size: clamp(1.6rem, 4vw, 2.2rem);
-      color: var(--washi);
-      letter-spacing: 0.1em;
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 20px;
+      letter-spacing: 0.05em;
+    }
+
+    .section-divider {
+      width: 40px;
+      height: 2px;
+      background: var(--camel);
       margin-bottom: 60px;
-      padding-bottom: 24px;
-      border-bottom: 1px solid rgba(196, 162, 101, 0.2);
     }
 
-    /* PHILOSOPHY */
-    #philosophy { background: rgba(20, 27, 45, 0.4); }
-
-    .philosophy-text {
-      font-size: 0.95rem;
-      color: var(--text-light);
-      line-height: 2.2;
-      margin-bottom: 32px;
-    }
-
-    .philosophy-text em {
-      font-style: normal;
-      color: var(--washi);
-      font-weight: 500;
-    }
-
-    .quote-block {
-      border-left: 2px solid var(--gold);
-      padding: 24px 32px;
-      margin: 40px 0;
-      background: var(--gold-dim);
-      border-radius: 0 8px 8px 0;
-    }
-
-    .quote-block p {
-      font-family: 'Zen Old Mincho', serif;
-      font-size: 1.05rem;
-      color: var(--washi);
-      line-height: 2;
-      letter-spacing: 0.06em;
-    }
-
-    .quote-block cite {
-      display: block;
-      margin-top: 16px;
-      font-style: normal;
-      font-size: 0.85rem;
-      color: var(--gold);
-      letter-spacing: 0.1em;
-    }
-
-    /* SERVICE */
-    .service-card {
-      background: rgba(30, 39, 64, 0.6);
-      border: 1px solid rgba(196, 162, 101, 0.15);
-      border-radius: 12px;
-      padding: 48px;
-      transition: border-color 0.3s, transform 0.3s;
-      margin-bottom: 40px;
-    }
-
-    .service-card:hover {
-      border-color: rgba(196, 162, 101, 0.4);
-      transform: translateY(-4px);
-    }
-
-    .service-icon {
-      font-family: 'Zen Old Mincho', serif;
-      font-size: 2.5rem;
-      color: var(--gold);
-      margin-bottom: 20px;
-      display: block;
-    }
-
-    .service-name {
-      font-family: 'Zen Old Mincho', serif;
-      font-size: 1.5rem;
-      color: var(--washi);
-      letter-spacing: 0.08em;
-      margin-bottom: 20px;
-    }
-
-    .service-desc {
-      font-size: 0.92rem;
-      color: var(--text-light);
-      line-height: 2.2;
-      margin-bottom: 28px;
-    }
-
-    .service-tag {
-      display: inline-block;
-      font-size: 0.78rem;
-      color: var(--gold);
-      border: 1px solid rgba(196, 162, 101, 0.4);
-      border-radius: 20px;
-      padding: 4px 16px;
-      letter-spacing: 0.08em;
-    }
-
-    .service-flow {
-      margin-top: 32px;
-      padding-top: 24px;
-      border-top: 1px solid rgba(196, 162, 101, 0.1);
-    }
-
-    .service-flow h4 {
-      font-size: 0.82rem;
-      color: var(--text-muted);
-      letter-spacing: 0.2em;
-      margin-bottom: 16px;
-    }
-
-    .flow-steps {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
-
-    .flow-step {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 0.85rem;
-      color: var(--text-light);
-    }
-
-    .flow-num {
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      background: var(--gold-dim);
-      border: 1px solid rgba(196, 162, 101, 0.3);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.7rem;
-      color: var(--gold);
-      flex-shrink: 0;
-    }
-
-    /* SERVICE DETAILS */
-    .service-details {
-      display: flex;
-      gap: 24px;
-      margin-top: 32px;
-      padding-top: 24px;
-      border-top: 1px solid rgba(196, 162, 101, 0.15);
-    }
-    .detail-item {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-    .detail-label {
-      font-size: 0.7rem;
-      letter-spacing: 0.1em;
-      color: var(--gold);
-    }
-    .detail-value {
-      font-family: 'Zen Old Mincho', serif;
-      font-size: 1.05rem;
-      color: var(--washi);
-    }
-
-    /* SECTION CTA */
-    .section-cta {
-      text-align: center;
-      margin-top: 64px;
-      padding-top: 48px;
-      border-top: 1px solid rgba(196, 162, 101, 0.1);
-    }
-    .section-cta-text {
-      font-family: 'Zen Old Mincho', serif;
-      font-size: 0.95rem;
-      color: var(--text-muted);
-      margin-bottom: 24px;
-      letter-spacing: 0.05em;
-    }
-
-    /* PROFILE */
-    #profile { background: rgba(10, 14, 26, 0.6); }
-
-    .profile-grid {
-      display: grid;
-      grid-template-columns: 200px 1fr;
-      gap: 60px;
-      align-items: start;
-    }
-
-    .profile-photo {
-      width: 200px;
-      height: 260px;
-      background: rgba(30, 39, 64, 0.6);
-      border: 1px solid rgba(196, 162, 101, 0.2);
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: 'Cormorant Garamond', serif;
-      color: var(--text-muted);
-      letter-spacing: 0.2em;
-      font-size: 0.85rem;
-    }
-
-    .profile-name {
-      font-family: 'Zen Old Mincho', serif;
-      font-size: 1.8rem;
-      color: var(--washi);
-      letter-spacing: 0.15em;
-      margin-bottom: 6px;
-    }
-
-    .profile-name-en {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 0.9rem;
-      color: var(--gold);
-      letter-spacing: 0.3em;
-      margin-bottom: 28px;
-    }
-
-    .profile-bio {
-      font-size: 0.9rem;
-      color: var(--text-light);
-      line-height: 2.2;
-      margin-bottom: 32px;
-    }
-
-    .profile-credentials {
-      border-top: 1px solid rgba(196, 162, 101, 0.1);
-      padding-top: 24px;
-    }
-
-    .profile-credentials h4 {
-      font-size: 0.78rem;
-      color: var(--gold);
-      letter-spacing: 0.2em;
-      margin-bottom: 16px;
-    }
-
-    .credential-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      font-size: 0.85rem;
-      color: var(--text-light);
-      margin-bottom: 10px;
-    }
-
-    .credential-item::before {
-      content: '─';
-      color: var(--gold);
-      flex-shrink: 0;
-    }
-
-    /* COLUMN */
-    #column { background: rgba(20, 27, 45, 0.4); }
-
-    .column-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 24px;
-    }
-
-    .column-card {
-      background: rgba(30, 39, 64, 0.5);
-      border: 1px solid rgba(196, 162, 101, 0.1);
-      border-radius: 8px;
-      overflow: hidden;
-      transition: border-color 0.3s, transform 0.3s;
-      cursor: pointer;
-      text-decoration: none;
-    }
-
-    .column-card:hover {
-      border-color: rgba(196, 162, 101, 0.35);
-      transform: translateY(-4px);
-    }
-
-    .column-thumb {
-      height: 140px;
-      background: linear-gradient(135deg, var(--indigo), var(--ink-light));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .column-thumb span {
-      font-family: 'Zen Old Mincho', serif;
-      font-size: 2rem;
-      color: rgba(196, 162, 101, 0.5);
-      letter-spacing: 0.15em;
-    }
-
-    .column-body { padding: 20px; }
-
-    .column-date {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      letter-spacing: 0.15em;
-      margin-bottom: 10px;
-    }
-
-    .column-title {
-      font-family: 'Zen Old Mincho', serif;
-      font-size: 0.92rem;
-      color: var(--washi);
-      line-height: 1.6;
-      letter-spacing: 0.05em;
-    }
-
-    /* CONTACT */
-    #contact {
-      background: radial-gradient(ellipse 80% 60% at 50% 50%, rgba(45, 58, 110, 0.3) 0%, transparent 70%);
-    }
-
-    .contact-inner { text-align: center; }
-
-    .contact-lead {
-      font-size: 0.95rem;
-      color: var(--text-light);
-      line-height: 2.2;
-      margin-bottom: 48px;
-      max-width: 560px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    .btn-primary {
-      display: inline-block;
-      font-family: 'Noto Sans JP', sans-serif;
-      font-size: 0.9rem;
-      font-weight: 500;
-      letter-spacing: 0.2em;
-      color: var(--ink-deep);
-      background: var(--gold);
-      border: none;
-      padding: 16px 48px;
-      border-radius: 4px;
-      text-decoration: none;
-      cursor: pointer;
-      transition: background 0.3s, transform 0.2s;
-      margin-bottom: 24px;
-    }
-
-    .btn-primary:hover {
-      background: var(--gold-light);
-      transform: translateY(-2px);
-    }
-
-    .contact-sub {
-      font-size: 0.82rem;
-      color: var(--text-muted);
-      letter-spacing: 0.05em;
-    }
-
-    .contact-sub a {
-      color: var(--gold);
-      text-decoration: none;
-    }
-
-    /* FOOTER */
-    footer {
-      position: relative;
-      z-index: 1;
-      text-align: center;
-      padding: 32px 40px;
-      border-top: 1px solid rgba(196, 162, 101, 0.1);
-    }
-
-    footer p {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      letter-spacing: 0.2em;
-    }
-
-    /* SCROLL REVEAL */
+    /* ===== SCROLL REVEAL ===== */
     .reveal {
       opacity: 0;
-      transform: translateY(30px);
-      transition: opacity 0.8s ease, transform 0.8s ease;
+      transform: translateY(24px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
     }
 
     .reveal.visible {
@@ -603,35 +198,634 @@
       transform: translateY(0);
     }
 
-    /* RESPONSIVE */
+    /* ===== HERO ===== */
+    #hero {
+      position: relative;
+      min-height: 100vh;
+      background: var(--bg-hero);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 0 40px;
+      overflow: hidden;
+    }
+
+    /* Hero → light section gradient fade */
+    #hero::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 140px;
+      background: linear-gradient(to bottom, transparent, var(--bg-warm-white));
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+    }
+
+    .hero-label {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.9rem;
+      letter-spacing: 0.4em;
+      color: var(--text-on-dark-muted);
+      margin-bottom: 32px;
+    }
+
+    .hero-yomi {
+      font-family: 'Noto Sans JP', sans-serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.3em;
+      color: var(--text-on-dark-muted);
+      margin-bottom: 12px;
+    }
+
+    .hero-name {
+      font-family: 'Zen Old Mincho', serif;
+      font-size: clamp(2.8rem, 7vw, 5rem);
+      font-weight: 700;
+      color: var(--text-on-dark);
+      letter-spacing: 0.15em;
+      margin-bottom: 48px;
+      line-height: 1.2;
+    }
+
+    .hero-line {
+      width: 1px;
+      height: 64px;
+      background: linear-gradient(to bottom, var(--camel), transparent);
+      margin: 0 auto 48px;
+    }
+
+    .hero-catch {
+      font-family: 'Zen Old Mincho', serif;
+      font-size: clamp(1.5rem, 3.5vw, 2.4rem);
+      font-weight: 400;
+      color: var(--text-on-dark);
+      letter-spacing: 0.08em;
+      line-height: 1.7;
+      margin-bottom: 28px;
+    }
+
+    .hero-sub {
+      font-size: 0.9rem;
+      color: var(--text-on-dark-muted);
+      letter-spacing: 0.1em;
+      line-height: 1.8;
+    }
+
+    .hero-scroll {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 3;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .hero-scroll span {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      color: var(--text-on-dark-muted);
+    }
+
+    .hero-scroll-line {
+      width: 1px;
+      height: 40px;
+      background: linear-gradient(to bottom, var(--camel-light), transparent);
+      animation: scrollPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 0.3; transform: scaleY(1); }
+      50% { opacity: 1; transform: scaleY(1.1); }
+    }
+
+    /* ===== PHILOSOPHY ===== */
+    #philosophy {
+      background: var(--bg-warm-white);
+    }
+
+    .philosophy-text {
+      max-width: 660px;
+      font-size: 1rem;
+      line-height: 2.1;
+      color: var(--text-secondary);
+    }
+
+    .philosophy-text p {
+      margin-bottom: 2em;
+    }
+
+    .pull-quote {
+      font-family: 'Zen Old Mincho', serif;
+      font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+      color: var(--camel);
+      border-left: 3px solid var(--camel);
+      padding: 12px 0 12px 28px;
+      margin: 2.5em 0;
+      line-height: 1.8;
+      font-weight: 400;
+    }
+
+    .philosophy-creed {
+      margin-top: 60px;
+      padding: 40px;
+      background: var(--bg-warm-light);
+      border-left: 3px solid var(--camel);
+      border-radius: 4px;
+    }
+
+    .philosophy-creed p {
+      font-family: 'Zen Old Mincho', serif;
+      font-size: 1.0rem;
+      color: var(--text-primary);
+      line-height: 2.2;
+      letter-spacing: 0.05em;
+    }
+
+    .philosophy-creed cite {
+      display: block;
+      margin-top: 16px;
+      font-style: normal;
+      font-size: 0.85rem;
+      color: var(--camel);
+      letter-spacing: 0.1em;
+    }
+
+    /* ===== SERVICE ===== */
+    #service {
+      background: var(--bg-section-alt);
+    }
+
+    .service-intro {
+      max-width: 660px;
+      font-family: 'Zen Old Mincho', serif;
+      font-size: 1.05rem;
+      color: var(--text-secondary);
+      line-height: 2.2;
+      margin-bottom: 60px;
+    }
+
+    .service-card {
+      background: #fff;
+      border: 1px solid var(--camel-border);
+      border-radius: 12px;
+      padding: 56px 56px 48px;
+      position: relative;
+      box-shadow: 0 4px 24px rgba(184, 134, 78, 0.06);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .service-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(184, 134, 78, 0.12);
+    }
+
+    .service-icon {
+      font-family: 'Zen Old Mincho', serif;
+      font-size: 3rem;
+      font-weight: 700;
+      color: var(--camel);
+      opacity: 0.4;
+      line-height: 1;
+      margin-bottom: 20px;
+    }
+
+    .service-name {
+      font-family: 'Zen Old Mincho', serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 24px;
+      letter-spacing: 0.05em;
+    }
+
+    .service-desc {
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      line-height: 2.1;
+      max-width: 600px;
+    }
+
+    .service-desc p { margin-bottom: 1.2em; }
+    .service-desc p:last-child { margin-bottom: 0; }
+
+    .service-tag {
+      display: inline-block;
+      margin-top: 24px;
+      padding: 6px 16px;
+      border: 1px solid var(--camel-border);
+      border-radius: 20px;
+      font-size: 0.78rem;
+      color: var(--camel);
+      letter-spacing: 0.08em;
+      background: var(--camel-dim);
+    }
+
+    /* Service details */
+    .service-details {
+      display: flex;
+      gap: 32px;
+      margin-top: 36px;
+      padding-top: 28px;
+      border-top: 1px solid var(--camel-border);
+      flex-wrap: wrap;
+    }
+
+    .detail-item {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .detail-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      color: var(--camel);
+      font-weight: 500;
+    }
+
+    .detail-value {
+      font-family: 'Zen Old Mincho', serif;
+      font-size: 1.05rem;
+      color: var(--text-primary);
+    }
+
+    /* Service flow */
+    .service-flow {
+      margin-top: 60px;
+    }
+
+    .flow-label {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.72rem;
+      letter-spacing: 0.3em;
+      color: var(--camel);
+      margin-bottom: 24px;
+    }
+
+    .flow-steps {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .flow-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 20px;
+      background: var(--bg-warm-light);
+      border-radius: 8px;
+    }
+
+    .flow-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--camel-dim);
+      border: 1px solid var(--camel-border);
+      color: var(--camel);
+      font-size: 0.78rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-family: 'Cormorant Garamond', serif;
+    }
+
+    .flow-text {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      padding-top: 3px;
+    }
+
+    /* Section CTA */
+    .section-cta {
+      text-align: center;
+      margin-top: 72px;
+      padding-top: 56px;
+      border-top: 1px solid var(--camel-border);
+    }
+
+    .section-cta-text {
+      font-family: 'Zen Old Mincho', serif;
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      margin-bottom: 28px;
+      letter-spacing: 0.08em;
+    }
+
+    /* ===== PROFILE ===== */
+    #profile {
+      background: var(--bg-warm-white);
+    }
+
+    .profile-grid {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 80px;
+      align-items: start;
+    }
+
+    .profile-photo-wrap {
+      position: relative;
+    }
+
+    .profile-photo {
+      width: 100%;
+      aspect-ratio: 3/4;
+      object-fit: cover;
+      border-radius: 12px;
+      display: block;
+      border: 1px solid var(--camel-border);
+      box-shadow: 4px 8px 32px rgba(184, 134, 78, 0.12);
+    }
+
+    .profile-photo-placeholder {
+      width: 100%;
+      aspect-ratio: 3/4;
+      background: var(--bg-warm-cream);
+      border-radius: 12px;
+      border: 1px solid var(--camel-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      letter-spacing: 0.1em;
+    }
+
+    .profile-name-ja {
+      font-family: 'Zen Old Mincho', serif;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: 0.12em;
+      margin-bottom: 8px;
+    }
+
+    .profile-name-en {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.95rem;
+      color: var(--camel);
+      letter-spacing: 0.2em;
+      margin-bottom: 36px;
+      font-style: italic;
+    }
+
+    .profile-bio {
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      line-height: 2.1;
+      max-width: 560px;
+    }
+
+    .profile-bio p { margin-bottom: 1.5em; }
+    .profile-bio p:last-child { margin-bottom: 0; }
+
+    .profile-certs {
+      margin-top: 40px;
+      padding-top: 32px;
+      border-top: 1px solid var(--camel-border);
+    }
+
+    .profile-certs-label {
+      font-size: 0.72rem;
+      letter-spacing: 0.2em;
+      color: var(--camel);
+      margin-bottom: 16px;
+      font-weight: 500;
+    }
+
+    .profile-certs ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .profile-certs li {
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+      padding-left: 16px;
+      position: relative;
+      line-height: 1.7;
+    }
+
+    .profile-certs li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 11px;
+      width: 4px;
+      height: 1px;
+      background: var(--camel);
+    }
+
+    /* ===== COLUMN ===== */
+    #column {
+      background: var(--bg-section-alt);
+    }
+
+    .column-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+    }
+
+    .column-card {
+      background: #fff;
+      border: 1px solid var(--camel-border);
+      border-radius: 10px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.3s, box-shadow 0.3s;
+      text-decoration: none;
+      display: block;
+      color: inherit;
+    }
+
+    .column-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 36px rgba(184, 134, 78, 0.12);
+    }
+
+    .column-card-img {
+      width: 100%;
+      aspect-ratio: 16/9;
+      background: var(--bg-warm-cream);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Zen Old Mincho', serif;
+      font-size: 2rem;
+      color: var(--camel);
+      opacity: 0.5;
+      letter-spacing: 0.1em;
+    }
+
+    .column-card-body {
+      padding: 24px 24px 28px;
+    }
+
+    .column-card-date {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      letter-spacing: 0.1em;
+      margin-bottom: 12px;
+    }
+
+    .column-card-title {
+      font-family: 'Zen Old Mincho', serif;
+      font-size: 1.0rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1.7;
+      margin-bottom: 10px;
+    }
+
+    .column-card-lead {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.8;
+    }
+
+    /* ===== CONTACT ===== */
+    #contact {
+      background: var(--bg-hero);
+      color: var(--text-on-dark);
+      text-align: center;
+    }
+
+    #contact .section-label { color: var(--camel-light); }
+
+    #contact .section-title {
+      color: var(--text-on-dark);
+      font-size: clamp(1.4rem, 3vw, 2rem);
+    }
+
+    #contact .section-divider {
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .contact-message {
+      font-family: 'Zen Old Mincho', serif;
+      font-size: 1.1rem;
+      color: var(--text-on-dark-muted);
+      line-height: 2.2;
+      margin-bottom: 60px;
+      letter-spacing: 0.05em;
+    }
+
+    .contact-buttons {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      display: inline-block;
+      padding: 18px 48px;
+      background: var(--camel);
+      color: #fff;
+      font-size: 0.9rem;
+      letter-spacing: 0.12em;
+      text-decoration: none;
+      border-radius: 2px;
+      transition: background 0.3s, transform 0.2s;
+      font-weight: 400;
+    }
+
+    .btn-primary:hover {
+      background: var(--camel-light);
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      display: inline-block;
+      padding: 18px 48px;
+      border: 1px solid var(--camel-border);
+      color: var(--camel-light);
+      font-size: 0.9rem;
+      letter-spacing: 0.12em;
+      text-decoration: none;
+      border-radius: 2px;
+      transition: border-color 0.3s, color 0.3s, transform 0.2s;
+      font-weight: 300;
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--camel-light);
+      color: var(--text-on-dark);
+      transform: translateY(-2px);
+    }
+
+    .contact-note {
+      margin-top: 28px;
+      font-size: 0.78rem;
+      color: var(--text-on-dark-muted);
+      letter-spacing: 0.05em;
+    }
+
+    /* ===== FOOTER ===== */
+    footer {
+      background: var(--ink-deep);
+      color: var(--text-on-dark-muted);
+      text-align: center;
+      padding: 32px 60px;
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+    }
+
+    /* ===== BUTTONS (general) ===== */
+    .btn-primary-light {
+      display: inline-block;
+      padding: 16px 44px;
+      background: var(--camel);
+      color: #fff;
+      font-size: 0.88rem;
+      letter-spacing: 0.12em;
+      text-decoration: none;
+      border-radius: 2px;
+      transition: background 0.3s, transform 0.2s;
+    }
+
+    .btn-primary-light:hover {
+      background: var(--camel-light);
+      transform: translateY(-2px);
+    }
+
+    /* ===== RESPONSIVE ===== */
     @media (max-width: 768px) {
       nav { padding: 20px 24px; }
+      section { padding: 80px 24px; }
 
-      .nav-links {
-        display: none;
-        position: fixed;
-        top: 0; left: 0; right: 0; bottom: 0;
-        background: rgba(10, 14, 26, 0.97);
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 36px;
-      }
-
-      .nav-links.open { display: flex; }
-      .nav-links a { font-size: 1.1rem; }
+      .nav-links { display: none; }
       .hamburger { display: flex; }
-
-      .section-inner { padding: 80px 24px; }
 
       .profile-grid {
         grid-template-columns: 1fr;
-        gap: 32px;
+        gap: 40px;
       }
 
-      .profile-photo {
-        width: 160px;
-        height: 200px;
+      .profile-photo-wrap {
+        max-width: 240px;
         margin: 0 auto;
       }
 
@@ -639,127 +833,165 @@
         grid-template-columns: 1fr;
       }
 
-      .flow-steps { flex-direction: column; }
-
-      .service-card { padding: 32px 24px; }
-
-      .service-details {
-        flex-direction: column;
-        gap: 16px;
+      .flow-steps {
+        grid-template-columns: 1fr;
       }
+
+      .contact-buttons {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .btn-primary, .btn-secondary {
+        width: 100%;
+        max-width: 320px;
+        text-align: center;
+      }
+
+      .hero-scroll { bottom: 60px; }
     }
 
     @media (max-width: 480px) {
-      .hero-catch { letter-spacing: 0.04em; }
-      .section-title { letter-spacing: 0.06em; }
+      .hero-name { letter-spacing: 0.08em; }
+      .hero-catch { font-size: 1.3rem; }
+      .service-card { padding: 36px 28px; }
+      .service-details { gap: 20px; }
     }
   </style>
 </head>
 <body>
 
+<!-- ===== CANVAS STARFIELD ===== -->
 <canvas id="starfield"></canvas>
 
-<!-- NAV -->
+<!-- ===== NAVIGATION ===== -->
 <nav id="navbar">
   <a href="#hero" class="nav-logo">啓亮</a>
-  <ul class="nav-links" id="navLinks">
+  <ul class="nav-links">
     <li><a href="#philosophy">想い</a></li>
     <li><a href="#service">サービス</a></li>
     <li><a href="#profile">プロフィール</a></li>
     <li><a href="#column">コラム</a></li>
     <li><a href="#contact">ご予約</a></li>
   </ul>
-  <div class="hamburger" id="hamburger" aria-label="メニュー">
-    <span></span><span></span><span></span>
+  <div class="hamburger" id="hamburger" role="button" aria-label="メニューを開く">
+    <span></span>
+    <span></span>
+    <span></span>
   </div>
 </nav>
 
-<!-- HERO -->
+<!-- ===== MOBILE MENU ===== -->
+<div class="mobile-menu" id="mobileMenu">
+  <span class="mobile-menu-close" id="menuClose">✕</span>
+  <a href="#philosophy" class="menu-link">想い</a>
+  <a href="#service" class="menu-link">サービス</a>
+  <a href="#profile" class="menu-link">プロフィール</a>
+  <a href="#column" class="menu-link">コラム</a>
+  <a href="#contact" class="menu-link">ご予約</a>
+</div>
+
+<!-- ===== HERO ===== -->
 <section id="hero">
-  <div class="hero-inner">
+  <canvas id="starfieldCanvas" style="position:absolute;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;"></canvas>
+  <div class="hero-content reveal">
+    <span class="hero-label">System Coaching</span>
     <p class="hero-yomi">もり　けいすけ</p>
     <h1 class="hero-name">森　啓亮</h1>
-    <p class="hero-title-en">System Coach</p>
-    <div class="hero-divider"></div>
-    <h2 class="hero-catch">関係性の中に、未来の種がある。</h2>
-    <p class="hero-sub">
-      強さも弱さも、想いも迷いも──<br>
-      すべてを力に変える、システムコーチング
-    </p>
-    <div class="scroll-hint">
-      <span>SCROLL</span>
-      <div class="scroll-line"></div>
-    </div>
+    <div class="hero-line"></div>
+    <p class="hero-catch">このチームに、いたいと思えていますか。</p>
+    <p class="hero-sub">関係性が変われば、組織は変わる。<br>──システムコーチ 森啓亮</p>
+  </div>
+  <div class="hero-scroll">
+    <div class="hero-scroll-line"></div>
+    <span>SCROLL</span>
   </div>
 </section>
 
-<!-- PHILOSOPHY -->
+<!-- ===== PHILOSOPHY ===== -->
 <section id="philosophy">
   <div class="section-inner">
     <span class="section-label reveal">Philosophy</span>
     <h2 class="section-title reveal">想い ── なぜ、コーチングなのか</h2>
+    <div class="section-divider reveal"></div>
 
-    <p class="philosophy-text reveal">
-      <em>「頑張っているのに、なぜかうまくいかない」</em><br>
-      <em>「一生懸命やっているのに、周りと分かり合えない」</em><br><br>
-      組織やチームの中で、そんな行き詰まりを感じたことはないでしょうか。<br>
-      私自身、組織人事コンサルタントとして10年にわたり多くの企業の組織変革に携わる中で、
-      ずっとその問いと向き合ってきました。
-    </p>
+    <div class="philosophy-text reveal">
+      <p>ずっと、「ここにいていいのかな」と思いながら生きてきました。</p>
 
-    <p class="philosophy-text reveal">
-      新卒で入社した大学受験予備校では、業績を上げることに必死になるあまり、
-      仲間との心の距離が離れていきました。
-      コンサルタントに転身してからも、「もっと努力すべきだ」と
-      自分にも他人にも厳しくあたり、大切な人を追い詰めてしまったことがあります。
-    </p>
+      <p>どこにいても、自分だけが透明になっていくような感覚。<br>
+      「誰にも見てもらえていない」という痛みを、長い間抱えていました。</p>
 
-    <p class="philosophy-text reveal">
-      「なぜ、同じパターンを繰り返すのか」──<br>
-      自分を深く見つめていく中で気づいたのは、
-      心の奥底にあった<em>「自分は周りに受け入れられない」</em>という信念でした。
-      そしてその信念の裏側にある本当の願いは、
-      「繋がり」「愛」「安全」だったのです。
-    </p>
+      <p>20代の頃、人生のあらゆることが同時に行き詰まった時期がありました。<br>
+      毎日が暗闘で、先が見えなかった。</p>
+    </div>
 
-    <p class="philosophy-text reveal">
-      あるコミュニティでの出会いをきっかけに、
-      勇気を出して自分の弱さやピュアな想いをさらけ出してみたとき、
-      世界が変わり始めました。壁を作っていたのは、自分自身だったのです。<br><br>
-      この原体験が、私をシステムコーチングへと導きました。
-      個人の能力やスキルではなく、人と人の「あいだ」にある<em>関係性そのもの</em>に働きかける。
-      強さや正しさだけで繋がるのではなく、
-      弱さや繊細さも含めて心から繋がれるチームをつくる。
-      それが私の信じるコーチングです。
-    </p>
+    <div class="pull-quote reveal">でも、あの時期があったから、今の自分がいる。</div>
 
-    <div class="quote-block reveal">
-      <p>
-        私自身が強さと弱さと想いをさらけ出して生きられる世界を生き、<br>
-        愛と相互信頼で駆動する組織にあふれた社会を創造する
-      </p>
+    <div class="philosophy-text reveal">
+      <p>自分を変えたのは、大切な人に本音を会えたことでした。<br>
+      ずっと言えなかった感謝のこと、悔しかったこと、弱い自分のこと。<br>
+      全部、言葉にした。</p>
+    </div>
+
+    <div class="pull-quote reveal">めちゃめちゃ怖かった。でも、さらけ出してみたら、世界が変わった。</div>
+
+    <div class="philosophy-text reveal">
+      <p>あのとき気づいたんです。<br>
+      人は「正しいこと」を言われても変わらない。<br>
+      でも、誰かが本気でさらけ出したとき──<br>
+      関係性のなかに、何かが動き始める。</p>
+
+      <p>いま僕がやっているシステムコーチングは、<br>
+      まさにそれを「チーム」の中で起こす仕事です。</p>
+
+      <p>チームの中にある「言えなかった声」に耳を傾ける。<br>
+      対立を恐れずに、関係性そのものと向き合う。<br>
+      その先に、「このチームにいたい」と思える場所が生まれる。</p>
+
+      <p>僕自身が居場所を探して生きてきたからこそ、<br>
+      確信していることがあります。</p>
+    </div>
+
+    <div class="pull-quote reveal">人は手段じゃない。その人自身が、目的だ。</div>
+
+    <div class="philosophy-text reveal">
+      <p>苦しみや恐れではなく、感で関わり合えるチームをつくる。<br>
+      それが僕の仕事です。</p>
+    </div>
+
+    <div class="philosophy-creed reveal">
+      <p>私自身が強さと弱さと想いをさらけ出して生きられる世界を生き、<br>
+      感と相互信頼で駆動する組織にあふれた社会を創造する</p>
       <cite>── 森 啓亮</cite>
     </div>
   </div>
 </section>
 
-<!-- SERVICE -->
+<!-- ===== SERVICE ===== -->
 <section id="service">
   <div class="section-inner">
     <span class="section-label reveal">Service</span>
     <h2 class="section-title reveal">提供するサービス</h2>
+    <div class="section-divider reveal"></div>
+
+    <div class="service-intro reveal">
+      言えなかった声が、場に出てくる。<br>
+      対立が、信頼に変わる。<br>
+      ──システムコーチングは、<br>
+      チームの関係性そのものに働きかけるアプローチです。
+    </div>
 
     <div class="service-card reveal">
-      <span class="service-icon">関</span>
+      <div class="service-icon">関</div>
       <h3 class="service-name">システムコーチング</h3>
-      <p class="service-desc">
-        CRR Globalの関係性システムコーチング（ORSC）をベースに、
-        チーム・組織の関係性にアプローチします。<br><br>
-        対立や停滞の奥にある「第三の声」を聴き、
-        関係性そのものを進化させるプロセスを伴走します。<br><br>
-        チーム内の心理的安全性を高め、
-        ありのままで繋がれる組織づくりを支援します。
-      </p>
+      <div class="service-desc">
+        <p>CRR Globalの関係性システムコーチング（ORSC）をベースに、
+        チーム・組織の関係性にアプローチします。</p>
+        <p>対立や停滞の奥にある「第三の声」を聴き、
+        関係性そのものを進化させるプロセスを伴走します。</p>
+        <p>チーム内の心理的安全性を高め、
+        ありのままで繋がれる組織づくりを支援します。</p>
+      </div>
       <span class="service-tag">対象：チーム・組織</span>
 
       <div class="service-details">
@@ -776,207 +1008,220 @@
           <span class="detail-value">対面 / オンライン</span>
         </div>
       </div>
+    </div>
 
-      <div class="service-flow">
-        <h4>SERVICE FLOW</h4>
-        <div class="flow-steps">
-          <div class="flow-step">
-            <div class="flow-num">1</div>
-            <span>初回オリエンテーション（30分・無料）</span>
-          </div>
-          <div class="flow-step">
-            <div class="flow-num">2</div>
-            <span>ヒアリング・ゴール設定</span>
-          </div>
-          <div class="flow-step">
-            <div class="flow-num">3</div>
-            <span>セッション実施（対面 or オンライン）</span>
-          </div>
-          <div class="flow-step">
-            <div class="flow-num">4</div>
-            <span>振り返り・次のステップ</span>
-          </div>
+    <div class="service-flow reveal">
+      <p class="flow-label">SERVICE FLOW</p>
+      <div class="flow-steps">
+        <div class="flow-step">
+          <div class="flow-num">1</div>
+          <span class="flow-text">初回オリエンテーション（30分・無料）</span>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num">2</div>
+          <span class="flow-text">ヒアリング・ゴール設定</span>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num">3</div>
+          <span class="flow-text">セッション実施（対面 or オンライン）</span>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num">4</div>
+          <span class="flow-text">振り返り・次のステップ</span>
         </div>
       </div>
     </div>
 
     <div class="section-cta reveal">
-      <p class="section-cta-text">
-        まずは30分の無料オリエンテーションから
-      </p>
-      <a href="mailto:keisuke.mori1222@gmail.com" class="btn-primary">
-        セッションを予約する
-      </a>
+      <p class="section-cta-text">まずは30分の無料オリエンテーションから</p>
+      <a href="#contact" class="btn-primary-light">セッションを予約する</a>
     </div>
   </div>
 </section>
 
-<!-- PROFILE -->
+<!-- ===== PROFILE ===== -->
 <section id="profile">
   <div class="section-inner">
     <span class="section-label reveal">Profile</span>
     <h2 class="section-title reveal">プロフィール</h2>
+    <div class="section-divider reveal"></div>
 
     <div class="profile-grid reveal">
-      <div>
-        <div class="profile-photo">PHOTO</div>
+      <div class="profile-photo-wrap">
+        <img src="2025-10-18-116.jpg" alt="森啓亮 プロフィール写真" class="profile-photo"
+          onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+        <div class="profile-photo-placeholder" style="display:none;">PHOTO</div>
       </div>
-      <div>
-        <h3 class="profile-name">森　啓亮</h3>
+      <div class="profile-info">
+        <p class="profile-name-ja">森　啓亮</p>
         <p class="profile-name-en">Keisuke Mori</p>
-        <p class="profile-bio">
-          大手大学受験予備校にて校舎運営・マネジメントに従事した後、
+        <div class="profile-bio">
+          <p>大手大学受験予備校にて校舎運営・マネジメントに従事した後、
           大手人材グループ企業にて組織人事コンサルタントに転身。
-          10年間にわたり、製造業・保険・IT・飲食業界など幅広い業界で
-          人事戦略設計、制度設計、人材開発、エンゲージメント向上を支援。<br><br>
-          その後、ベンチャー企業にて組織人事コンサルティング事業の
-          立ち上げに第一号社員として参画。<br><br>
-          コンサルタントとしてデータ分析と現場対話の両軸で
+          働き方改革の推進、人事戦略設計、制度設計、人材開発の領域で
+          幅広いクライアントを支援。</p>
+          <p>その後、ベンチャー企業にて組織人事コンサルティング事業の
+          立ち上げに第一号社員として参画。</p>
+          <p>コンサルタントとしてデータ分析と現場対話の両軸で
           組織変革を推進する中で、
           関係性そのものに働きかけるシステムコーチングと出会い、
-          その可能性に深く惹かれる。
-          現在は、組織開発の知見とシステムコーチングを統合し、
-          チームと組織の関係性変容を支援している。
-        </p>
-        <div class="profile-credentials">
-          <h4>CREDENTIALS</h4>
-          <div class="credential-item">CRR Global 関係性システムコーチング（ORSC）応用コース修了</div>
-          <div class="credential-item">組織人事コンサルタント（実務10年）</div>
-          <div class="credential-item">プロセスワーク（プロセス指向心理学）学習者</div>
-          <div class="credential-item">エンゲージメントサーベイ 設計・分析 専門</div>
+          その可能性に深く惹かれる。</p>
+          <p>現在は、組織開発の知見とシステムコーチングを統合し、
+          チームと組織の関係性変容を支援している。</p>
+        </div>
+        <div class="profile-certs">
+          <p class="profile-certs-label">CREDENTIALS</p>
+          <ul>
+            <li>CRR Global 関係性システムコーチング（ORSC） 応用コース修了</li>
+            <li>組織人事コンサルタント（実務10年）</li>
+            <li>プロセスワーク（プロセス指向心理学）学習者</li>
+            <li>エンゲージメントサーベイ 設計・分析 専門</li>
+          </ul>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- COLUMN -->
+<!-- ===== COLUMN ===== -->
 <section id="column">
   <div class="section-inner">
     <span class="section-label reveal">Column</span>
     <h2 class="section-title reveal">コラム</h2>
+    <div class="section-divider reveal"></div>
 
-    <div class="column-grid reveal">
-      <a href="#" class="column-card">
-        <div class="column-thumb"><span>関係</span></div>
-        <div class="column-body">
-          <p class="column-date">2026.03.01</p>
-          <p class="column-title">「対立」を力に変える──チームの中の声なき声を聴く</p>
+    <div class="column-grid">
+      <a href="#" class="column-card reveal">
+        <div class="column-card-img">対話</div>
+        <div class="column-card-body">
+          <p class="column-card-date">2026.03.01</p>
+          <h3 class="column-card-title">「対話」と「会話」はどう違うのか</h3>
+          <p class="column-card-lead">チームの中で本当に必要なのは、結論を出す会話ではなく──</p>
         </div>
       </a>
-      <a href="#" class="column-card">
-        <div class="column-thumb"><span>信頼</span></div>
-        <div class="column-body">
-          <p class="column-date">2026.02.15</p>
-          <p class="column-title">弱さをさらけ出せる組織が、なぜ強いのか</p>
+      <a href="#" class="column-card reveal">
+        <div class="column-card-img">信頼</div>
+        <div class="column-card-body">
+          <p class="column-card-date">2026.02.15</p>
+          <h3 class="column-card-title">心理的安全性の「その先」にあるもの</h3>
+          <p class="column-card-lead">安全な場をつくった後、チームには何が求められるのか。</p>
         </div>
       </a>
-      <a href="#" class="column-card">
-        <div class="column-thumb"><span>変容</span></div>
-        <div class="column-body">
-          <p class="column-date">2026.01.28</p>
-          <p class="column-title">システムコーチングとは何か──関係性の「あいだ」に働きかける</p>
+      <a href="#" class="column-card reveal">
+        <div class="column-card-img">変容</div>
+        <div class="column-card-body">
+          <p class="column-card-date">2026.01.28</p>
+          <h3 class="column-card-title">さらけ出すことは、弱さではない</h3>
+          <p class="column-card-lead">リーダーが弱みを見せることで、チームに何が起きるのか。</p>
         </div>
       </a>
     </div>
   </div>
 </section>
 
-<!-- CONTACT -->
+<!-- ===== CONTACT ===== -->
 <section id="contact">
-  <div class="section-inner contact-inner">
+  <div class="section-inner">
     <span class="section-label reveal">Contact</span>
     <h2 class="section-title reveal">セッションのご予約・お問い合わせ</h2>
+    <div class="section-divider reveal"></div>
 
-    <p class="contact-lead reveal">
-      まずはお気軽にご相談ください。<br>
-      初回のオリエンテーション（30分・無料）で、<br>
-      お話を伺いながら最適なアプローチをご提案いたします。
+    <p class="contact-message reveal">
+      あなたのチームに、今どんな声がありますか。<br>
+      聞かせてください。まずはそこから始めましょう。
     </p>
 
-    <div class="reveal">
-      <a href="mailto:keisuke.mori1222@gmail.com" class="btn-primary">セッションを予約する</a>
-      <p class="contact-sub">
-        法人のお問い合わせは <a href="mailto:keisuke.mori1222@gmail.com">こちら</a>
-      </p>
+    <div class="contact-buttons reveal">
+      <a href="mailto:keisuke.mori1222@gmail.com?subject=【法人】お問い合わせ" class="btn-primary">法人のお問い合わせ</a>
+      <a href="mailto:keisuke.mori1222@gmail.com?subject=無料オリエンテーションのご希望" class="btn-secondary">無料オリエンテーション（30分）</a>
     </div>
+    <p class="contact-note reveal">※ 初回のオリエンテーションは無料です。お気軽にご相談ください。</p>
   </div>
 </section>
 
-<!-- FOOTER -->
+<!-- ===== FOOTER ===== -->
 <footer>
   <p>© 2026 森 啓亮 ─ System Coaching</p>
 </footer>
 
 <script>
-  // Starfield
-  const canvas = document.getElementById('starfield');
-  const ctx = canvas.getContext('2d');
-  let stars = [];
+  // ===== STARFIELD (Hero canvas only) =====
+  (function() {
+    const canvas = document.getElementById('starfieldCanvas');
+    const ctx = canvas.getContext('2d');
+    let stars = [];
 
-  function resize() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-  }
-
-  function initStars() {
-    stars = [];
-    for (let i = 0; i < 180; i++) {
-      stars.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        r: Math.random() * 1.2 + 0.2,
-        alpha: Math.random(),
-        delta: (Math.random() * 0.005 + 0.002) * (Math.random() < 0.5 ? 1 : -1)
-      });
+    function resize() {
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
     }
-  }
 
-  function drawStars() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    stars.forEach(s => {
-      s.alpha += s.delta;
-      if (s.alpha <= 0 || s.alpha >= 1) s.delta *= -1;
-      ctx.beginPath();
-      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(196, 162, 101, ${s.alpha * 0.7})`;
-      ctx.fill();
-    });
-    requestAnimationFrame(drawStars);
-  }
+    function initStars() {
+      stars = [];
+      const count = Math.floor((canvas.width * canvas.height) / 3000);
+      for (let i = 0; i < count; i++) {
+        stars.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          r: Math.random() * 1.2 + 0.2,
+          alpha: Math.random(),
+          speed: Math.random() * 0.008 + 0.003,
+          phase: Math.random() * Math.PI * 2
+        });
+      }
+    }
 
-  resize();
-  initStars();
-  drawStars();
-  window.addEventListener('resize', () => { resize(); initStars(); });
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const t = Date.now() * 0.001;
+      stars.forEach(s => {
+        const a = (Math.sin(t * s.speed * 6 + s.phase) + 1) / 2 * 0.7 + 0.1;
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(212, 167, 106, ${a})`;
+        ctx.fill();
+      });
+      requestAnimationFrame(draw);
+    }
 
-  // Nav scroll
+    resize();
+    initStars();
+    draw();
+    window.addEventListener('resize', () => { resize(); initStars(); });
+  })();
+
+  // ===== NAV SCROLL =====
   const navbar = document.getElementById('navbar');
   window.addEventListener('scroll', () => {
-    navbar.classList.toggle('scrolled', window.scrollY > 50);
+    if (window.scrollY > 60) {
+      navbar.classList.add('scrolled');
+    } else {
+      navbar.classList.remove('scrolled');
+    }
   });
 
-  // Hamburger
+  // ===== HAMBURGER MENU =====
   const hamburger = document.getElementById('hamburger');
-  const navLinks = document.getElementById('navLinks');
-  hamburger.addEventListener('click', () => {
-    navLinks.classList.toggle('open');
-  });
-  navLinks.querySelectorAll('a').forEach(a => {
-    a.addEventListener('click', () => navLinks.classList.remove('open'));
+  const mobileMenu = document.getElementById('mobileMenu');
+  const menuClose = document.getElementById('menuClose');
+
+  hamburger.addEventListener('click', () => mobileMenu.classList.add('open'));
+  menuClose.addEventListener('click', () => mobileMenu.classList.remove('open'));
+
+  document.querySelectorAll('.menu-link').forEach(link => {
+    link.addEventListener('click', () => mobileMenu.classList.remove('open'));
   });
 
-  // Scroll reveal
-  const reveals = document.querySelectorAll('.reveal');
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        e.target.classList.add('visible');
-        observer.unobserve(e.target);
+  // ===== SCROLL REVEAL =====
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
       }
     });
-  }, { threshold: 0.1 });
-  reveals.forEach(el => observer.observe(el));
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 </script>
 </body>
 </html>

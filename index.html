@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>森 啓亮 | システムコーチ</title>
+  <meta name="description" content="森啓亮のシステムコーチングサービス。CRR Global ORSCベースのシステムコーチング。チーム・組織の関係性にアプローチし、ありのままで繋がれる組織づくりを支援します。">
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@400;700&family=Noto+Sans+JP:wght@300;400;500;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink-deep: #0a0e1a;
+      --ink-mid: #141b2d;
+      --ink-light: #1e2740;
+      --indigo: #2d3a6e;
+      --indigo-soft: #4a5a99;
+      --gold: #c4a265;
+      --gold-light: #dfc799;
+      --gold-dim: rgba(196, 162, 101, 0.15);
+      --washi: #f5f0e8;
+      --washi-dark: #e8e0d0;
+      --text-light: #d4cfc5;
+      --text-muted: #8a8578;
+      --text-dark: #2c2820;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Noto Sans JP', sans-serif;
+      background-color: var(--ink-deep);
+      color: var(--text-light);
+      font-weight: 300;
+      line-height: 1.8;
+      overflow-x: hidden;
+    }
+
+    /* Canvas starfield */
+    #starfield {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 24px 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background 0.4s, backdrop-filter 0.4s;
+    }
+
+    nav.scrolled {
+      background: rgba(10, 14, 26, 0.85);
+      backdrop-filter: blur(12px);
+    }
+
+    .nav-logo {
+      font-family: 'Zen Old Mincho', serif;
+      font-size: 1.5rem;
+      color: var(--gold);
+      text-decoration: none;
+      letter-spacing: 0.1em;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 40px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 0.85rem;
+      color: var(--text-light);
+      text-decoration: none;
+      letter-spacing: 0.12em;
+      transition: color 0.3s;
+    }
+
+    .nav-links a:hover { color: var(--gold); }
+
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .hamburger span {
+      display: block;
+      width: 24px;
+      height: 1.5px;
+      background: var(--gold);
+      transition: all 0.3s;
+    }
+
+    /* SECTIONS */
+    section {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* HERO */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 120px 40px 100px;
+      background: radial-gradient(ellipse 80% 60% at 50% 40%, rgba(45, 58, 110, 0.5) 0%, transparent 70%),
+                  radial-gradient(ellipse 50% 40% at 30% 60%, rgba(74, 90, 153, 0.2) 0%, transparent 60%);
+    }
+
+    .hero-inner { max-width: 800px; }
+
+    .hero-yomi {
+      font-family: 'Noto Sans JP', sans-serif;
+      font-size: 0.8rem;
+      letter-spacing: 0.4em;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+    }
+
+    .hero-name {
+      font-family: 'Zen Old Mincho', serif;
+      font-size: clamp(3rem, 8vw, 5.5rem);
+      color: var(--washi);
+      letter-spacing: 0.15em;
+      line-height: 1.2;
+      margin-bottom: 16px;
+    }
+
+    .hero-title-en {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem;
+      letter-spacing: 0.3em;
+      color: var(--gold);
+      margin-bottom: 60px;
+    }
+
+    .hero-divider {
+      width: 1px;
+      height: 60px;
+      background: linear-gradient(to bottom, transparent, var(--gold), transparent);
+      margin: 0 auto 60px;
+    }
+
+    .hero-catch {
+      font-family: 'Zen Old Mincho', serif;
+      font-size: clamp(1.5rem, 4vw, 2.4rem);
+      color: var(--washi);
+      letter-spacing: 0.08em;
+      line-height: 1.5;
+      margin-bottom: 24px;
+    }
+
+    .hero-sub {
+      font-size: 1rem;
+      color: var(--text-muted);
+      letter-spacing: 0.05em;
+      line-height: 2;
+      margin-bottom: 60px;
+    }
+
+    .scroll-hint {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      margin-top: 40px;
+    }
+
+    .scroll-hint span {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.3em;
+      color: var(--text-muted);
+    }
+
+    .scroll-line {
+      width: 1px;
+      height: 50px;
+      background: linear-gradient(to bottom, var(--gold), transparent);
+      animation: scrollDown 1.8s infinite;
+    }
+
+    @keyframes scrollDown {
+      0% { opacity: 1; transform: scaleY(1); transform-origin: top; }
+      100% { opacity: 0; transform: scaleY(0); transform-origin: top; }
+    }
+
+    /* SECTION COMMON */
+    .section-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 100px 40px;
+    }
+
+    .section-label {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.8rem;
+      letter-spacing: 0.4em;
+      color: var(--gold);
+      display: block;
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-family: 'Zen Old Mincho', serif;
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      color: var(--washi);
+      letter-spacing: 0.1em;
+      margin-bottom: 60px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid rgba(196, 162, 101, 0.2);
+    }
+
+    /* PHILOSOPHY */
+    #philosophy { background: rgba(20, 27, 45, 0.4); }
+
+    .philosophy-text {
+      font-size: 0.95rem;
+      color: var(--text-light);
+      line-height: 2.2;
+      margin-bottom: 32px;
+    }
+
+    .philosophy-text em {
+      font-style: normal;
+      color: var(--washi);
+      font-weight: 500;
+    }
+
+    .quote-block {
+      border-left: 2px solid var(--gold);
+      padding: 24px 32px;
+      margin: 40px 0;
+      background: var(--gold-dim);
+      border-radius: 0 8px 8px 0;
+    }
+
+    .quote-block p {
+      font-family: 'Zen Old Mincho', serif;
+      font-size: 1.05rem;
+      color: var(--washi);
+      line-height: 2;
+      letter-spacing: 0.06em;
+    }
+
+    .quote-block cite {
+      display: block;
+      margin-top: 16px;
+      font-style: normal;
+      font-size: 0.85rem;
+      color: var(--gold);
+      letter-spacing: 0.1em;
+    }
+
+    /* SERVICE */
+    .service-card {
+      background: rgba(30, 39, 64, 0.6);
+      border: 1px solid rgba(196, 162, 101, 0.15);
+      border-radius: 12px;
+      padding: 48px;
+      transition: border-color 0.3s, transform 0.3s;
+      margin-bottom: 40px;
+    }
+
+    .service-card:hover {
+      border-color: rgba(196, 162, 101, 0.4);
+      transform: translateY(-4px);
+    }
+
+    .service-icon {
+      font-family: 'Zen Old Mincho', serif;
+      font-size: 2.5rem;
+      color: var(--gold);
+      margin-bottom: 20px;
+      display: block;
+    }
+
+    .service-name {
+      font-family: 'Zen Old Mincho', serif;
+      font-size: 1.5rem;
+      color: var(--washi);
+      letter-spacing: 0.08em;
+      margin-bottom: 20px;
+    }
+
+    .service-desc {
+      font-size: 0.92rem;
+      color: var(--text-light);
+      line-height: 2.2;
+      margin-bottom: 28px;
+    }
+
+    .service-tag {
+      display: inline-block;
+      font-size: 0.78rem;
+      color: var(--gold);
+      border: 1px solid rgba(196, 162, 101, 0.4);
+      border-radius: 20px;
+      padding: 4px 16px;
+      letter-spacing: 0.08em;
+    }
+
+    .service-flow {
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px solid rgba(196, 162, 101, 0.1);
+    }
+
+    .service-flow h4 {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      letter-spacing: 0.2em;
+      margin-bottom: 16px;
+    }
+
+    .flow-steps {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .flow-step {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.85rem;
+      color: var(--text-light);
+    }
+
+    .flow-num {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--gold-dim);
+      border: 1px solid rgba(196, 162, 101, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      color: var(--gold);
+      flex-shrink: 0;
+    }
+
+    /* PROFILE */
+    #profile { background: rgba(10, 14, 26, 0.6); }
+
+    .profile-grid {
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: 60px;
+      align-items: start;
+    }
+
+    .profile-photo {
+      width: 200px;
+      height: 260px;
+      background: rgba(30, 39, 64, 0.6);
+      border: 1px solid rgba(196, 162, 101, 0.2);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Cormorant Garamond', serif;
+      color: var(--text-muted);
+      letter-spacing: 0.2em;
+      font-size: 0.85rem;
+    }
+
+    .profile-name {
+      font-family: 'Zen Old Mincho', serif;
+      font-size: 1.8rem;
+      color: var(--washi);
+      letter-spacing: 0.15em;
+      margin-bottom: 6px;
+    }
+
+    .profile-name-en {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.9rem;
+      color: var(--gold);
+      letter-spacing: 0.3em;
+      margin-bottom: 28px;
+    }
+
+    .profile-bio {
+      font-size: 0.9rem;
+      color: var(--text-light);
+      line-height: 2.2;
+      margin-bottom: 32px;
+    }
+
+    .profile-credentials {
+      border-top: 1px solid rgba(196, 162, 101, 0.1);
+      padding-top: 24px;
+    }
+
+    .profile-credentials h4 {
+      font-size: 0.78rem;
+      color: var(--gold);
+      letter-spacing: 0.2em;
+      margin-bottom: 16px;
+    }
+
+    .credential-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 0.85rem;
+      color: var(--text-light);
+      margin-bottom: 10px;
+    }
+
+    .credential-item::before {
+      content: '─';
+      color: var(--gold);
+      flex-shrink: 0;
+    }
+
+    /* COLUMN */
+    #column { background: rgba(20, 27, 45, 0.4); }
+
+    .column-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .column-card {
+      background: rgba(30, 39, 64, 0.5);
+      border: 1px solid rgba(196, 162, 101, 0.1);
+      border-radius: 8px;
+      overflow: hidden;
+      transition: border-color 0.3s, transform 0.3s;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .column-card:hover {
+      border-color: rgba(196, 162, 101, 0.35);
+      transform: translateY(-4px);
+    }
+
+    .column-thumb {
+      height: 140px;
+      background: linear-gradient(135deg, var(--indigo), var(--ink-light));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .column-thumb span {
+      font-family: 'Zen Old Mincho', serif;
+      font-size: 2rem;
+      color: rgba(196, 162, 101, 0.5);
+      letter-spacing: 0.15em;
+    }
+
+    .column-body { padding: 20px; }
+
+    .column-date {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      letter-spacing: 0.15em;
+      margin-bottom: 10px;
+    }
+
+    .column-title {
+      font-family: 'Zen Old Mincho', serif;
+      font-size: 0.92rem;
+      color: var(--washi);
+      line-height: 1.6;
+      letter-spacing: 0.05em;
+    }
+
+    /* CONTACT */
+    #contact {
+      background: radial-gradient(ellipse 80% 60% at 50% 50%, rgba(45, 58, 110, 0.3) 0%, transparent 70%);
+    }
+
+    .contact-inner { text-align: center; }
+
+    .contact-lead {
+      font-size: 0.95rem;
+      color: var(--text-light);
+      line-height: 2.2;
+      margin-bottom: 48px;
+      max-width: 560px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .btn-primary {
+      display: inline-block;
+      font-family: 'Noto Sans JP', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      color: var(--ink-deep);
+      background: var(--gold);
+      border: none;
+      padding: 16px 48px;
+      border-radius: 4px;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+      margin-bottom: 24px;
+    }
+
+    .btn-primary:hover {
+      background: var(--gold-light);
+      transform: translateY(-2px);
+    }
+
+    .contact-sub {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      letter-spacing: 0.05em;
+    }
+
+    .contact-sub a {
+      color: var(--gold);
+      text-decoration: none;
+    }
+
+    /* FOOTER */
+    footer {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 32px 40px;
+      border-top: 1px solid rgba(196, 162, 101, 0.1);
+    }
+
+    footer p {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      letter-spacing: 0.2em;
+    }
+
+    /* SCROLL REVEAL */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      nav { padding: 20px 24px; }
+
+      .nav-links {
+        display: none;
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(10, 14, 26, 0.97);
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 36px;
+      }
+
+      .nav-links.open { display: flex; }
+      .nav-links a { font-size: 1.1rem; }
+      .hamburger { display: flex; }
+
+      .section-inner { padding: 80px 24px; }
+
+      .profile-grid {
+        grid-template-columns: 1fr;
+        gap: 32px;
+      }
+
+      .profile-photo {
+        width: 160px;
+        height: 200px;
+        margin: 0 auto;
+      }
+
+      .column-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .flow-steps { flex-direction: column; }
+
+      .service-card { padding: 32px 24px; }
+    }
+
+    @media (max-width: 480px) {
+      .hero-catch { letter-spacing: 0.04em; }
+      .section-title { letter-spacing: 0.06em; }
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="starfield"></canvas>
+
+<!-- NAV -->
+<nav id="navbar">
+  <a href="#hero" class="nav-logo">啓亮</a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#philosophy">想い</a></li>
+    <li><a href="#service">サービス</a></li>
+    <li><a href="#profile">プロフィール</a></li>
+    <li><a href="#column">コラム</a></li>
+    <li><a href="#contact">ご予約</a></li>
+  </ul>
+  <div class="hamburger" id="hamburger" aria-label="メニュー">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-inner">
+    <p class="hero-yomi">もり　けいすけ</p>
+    <h1 class="hero-name">森　啓亮</h1>
+    <p class="hero-title-en">System Coach</p>
+    <div class="hero-divider"></div>
+    <h2 class="hero-catch">関係性の中に、未来の種がある。</h2>
+    <p class="hero-sub">
+      強さも弱さも、想いも迷いも──<br>
+      すべてを力に変える、システムコーチング
+    </p>
+    <div class="scroll-hint">
+      <span>SCROLL</span>
+      <div class="scroll-line"></div>
+    </div>
+  </div>
+</section>
+
+<!-- PHILOSOPHY -->
+<section id="philosophy">
+  <div class="section-inner">
+    <span class="section-label reveal">Philosophy</span>
+    <h2 class="section-title reveal">想い ── なぜ、コーチングなのか</h2>
+
+    <p class="philosophy-text reveal">
+      <em>「頑張っているのに、なぜかうまくいかない」</em><br>
+      <em>「一生懸命やっているのに、周りと分かり合えない」</em><br><br>
+      組織やチームの中で、そんな行き詰まりを感じたことはないでしょうか。<br>
+      私自身、長い間その問いの中を生きてきました。
+    </p>
+
+    <p class="philosophy-text reveal">
+      新卒で入社した大学受験予備校では、業績を上げることに必死になるあまり、
+      仲間との心の距離が離れていきました。
+      コンサルタントに転身してからも、「もっと努力すべきだ」と
+      自分にも他人にも厳しくあたり、大切な人を追い詰めてしまったことがあります。
+    </p>
+
+    <p class="philosophy-text reveal">
+      「なぜ、同じパターンを繰り返すのか」──<br>
+      自分を深く見つめていく中で気づいたのは、
+      心の奥底にあった<em>「自分は周りに受け入れられない」</em>という信念でした。
+      そしてその信念の裏側にある本当の願いは、
+      「繋がり」「感」「安全」だったのです。
+    </p>
+
+    <p class="philosophy-text reveal">
+      あるコミュニティでの出会いをきっかけに、
+      勇気を出して自分の弱さやピュアな想いをさらけ出してみたとき、
+      世界が変わり始めました。壁を作っていたのは、自分自身だったのです。<br><br>
+      この原体験が、私をシステムコーチングへと導きました。
+      個人の能力やスキルではなく、人と人の「あいだ」にある<em>関係性そのもの</em>に働きかける。
+      強さや正しさだけで繋がるのではなく、
+      弱さや繊細さも含めて心から繋がれるチームをつくる。
+      それが私の信じるコーチングです。
+    </p>
+
+    <div class="quote-block reveal">
+      <p>
+        私自身が強さと弱さと想いをさらけ出して生きられる世界を生き、<br>
+        感と相互信頼で駆動する組織にあふれた社会を創造する
+      </p>
+      <cite>── 森 啓亮</cite>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICE -->
+<section id="service">
+  <div class="section-inner">
+    <span class="section-label reveal">Service</span>
+    <h2 class="section-title reveal">提供するサービス</h2>
+
+    <div class="service-card reveal">
+      <span class="service-icon">関</span>
+      <h3 class="service-name">システムコーチング</h3>
+      <p class="service-desc">
+        CRR Globalの関係性システムコーチング（ORSC）をベースに、
+        チーム・組織の関係性にアプローチします。<br><br>
+        対立や停滞の奥にある「第三の声」を聴き、
+        関係性そのものを進化させるプロセスを伴走します。<br><br>
+        チーム内の心理的安全性を高め、
+        ありのままで繋がれる組織づくりを支援します。
+      </p>
+      <span class="service-tag">対象：チーム・組織</span>
+
+      <div class="service-flow">
+        <h4>SERVICE FLOW</h4>
+        <div class="flow-steps">
+          <div class="flow-step">
+            <div class="flow-num">1</div>
+            <span>初回オリエンテーション（30分・無料）</span>
+          </div>
+          <div class="flow-step">
+            <div class="flow-num">2</div>
+            <span>ヒアリング・ゴール設定</span>
+          </div>
+          <div class="flow-step">
+            <div class="flow-num">3</div>
+            <span>セッション実施（対面 or オンライン）</span>
+          </div>
+          <div class="flow-step">
+            <div class="flow-num">4</div>
+            <span>振り返り・次のステップ</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROFILE -->
+<section id="profile">
+  <div class="section-inner">
+    <span class="section-label reveal">Profile</span>
+    <h2 class="section-title reveal">プロフィール</h2>
+
+    <div class="profile-grid reveal">
+      <div>
+        <div class="profile-photo">PHOTO</div>
+      </div>
+      <div>
+        <h3 class="profile-name">森　啓亮</h3>
+        <p class="profile-name-en">Keisuke Mori</p>
+        <p class="profile-bio">
+          大手大学受験予備校にて校舎運営・マネジメントに従事した後、
+          大手人材グループ企業にて組織人事コンサルタントに転身。
+          働き方改革の推進、人事戦略設計、制度設計、人材開発の領域で
+          幅広いクライアントを支援。<br><br>
+          その後、ベンチャー企業にて組織人事コンサルティング事業の
+          立ち上げに第一号社員として参画。<br><br>
+          コンサルタントとしてデータ分析と現場対話の両軸で
+          組織変革を推進する中で、
+          関係性そのものに働きかけるシステムコーチングと出会い、
+          その可能性に深く惹かれる。
+          現在は、組織開発の知見とシステムコーチングを統合し、
+          チームと組織の関係性変容を支援している。
+        </p>
+        <div class="profile-credentials">
+          <h4>CREDENTIALS</h4>
+          <div class="credential-item">CRR Global 関係性システムコーチング（ORSC）応用コース修了</div>
+          <div class="credential-item">組織人事コンサルタント（実務10年）</div>
+          <div class="credential-item">プロセスワーク（プロセス指向心理学）学習者</div>
+          <div class="credential-item">エンゲージメントサーベイ 設計・分析 専門</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COLUMN -->
+<section id="column">
+  <div class="section-inner">
+    <span class="section-label reveal">Column</span>
+    <h2 class="section-title reveal">コラム</h2>
+
+    <div class="column-grid reveal">
+      <a href="#" class="column-card">
+        <div class="column-thumb"><span>関係</span></div>
+        <div class="column-body">
+          <p class="column-date">2026.03.01</p>
+          <p class="column-title">「対立」を力に変える──チームの中の声なき声を聴く</p>
+        </div>
+      </a>
+      <a href="#" class="column-card">
+        <div class="column-thumb"><span>信頼</span></div>
+        <div class="column-body">
+          <p class="column-date">2026.02.15</p>
+          <p class="column-title">弱さをさらけ出せる組織が、なぜ強いのか</p>
+        </div>
+      </a>
+      <a href="#" class="column-card">
+        <div class="column-thumb"><span>変容</span></div>
+        <div class="column-body">
+          <p class="column-date">2026.01.28</p>
+          <p class="column-title">システムコーチングとは何か──関係性の「あいだ」に働きかける</p>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="section-inner contact-inner">
+    <span class="section-label reveal">Contact</span>
+    <h2 class="section-title reveal">セッションのご予約・お問い合わせ</h2>
+
+    <p class="contact-lead reveal">
+      まずはお気軽にご相談ください。<br>
+      初回のオリエンテーション（30分・無料）で、<br>
+      お話を伺いながら最適なアプローチをご提案いたします。
+    </p>
+
+    <div class="reveal">
+      <a href="mailto:keisuke.mori1222@gmail.com" class="btn-primary">セッションを予約する</a>
+      <p class="contact-sub">
+        法人のお問い合わせは <a href="mailto:keisuke.mori1222@gmail.com">こちら</a>
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>© 2026 森 啓亮 ─ System Coaching</p>
+</footer>
+
+<script>
+  // Starfield
+  const canvas = document.getElementById('starfield');
+  const ctx = canvas.getContext('2d');
+  let stars = [];
+
+  function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+
+  function initStars() {
+    stars = [];
+    for (let i = 0; i < 180; i++) {
+      stars.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        r: Math.random() * 1.2 + 0.2,
+        alpha: Math.random(),
+        delta: (Math.random() * 0.005 + 0.002) * (Math.random() < 0.5 ? 1 : -1)
+      });
+    }
+  }
+
+  function drawStars() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    stars.forEach(s => {
+      s.alpha += s.delta;
+      if (s.alpha <= 0 || s.alpha >= 1) s.delta *= -1;
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(196, 162, 101, ${s.alpha * 0.7})`;
+      ctx.fill();
+    });
+    requestAnimationFrame(drawStars);
+  }
+
+  resize();
+  initStars();
+  drawStars();
+  window.addEventListener('resize', () => { resize(); initStars(); });
+
+  // Nav scroll
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    navbar.classList.toggle('scrolled', window.scrollY > 50);
+  });
+
+  // Hamburger
+  const hamburger = document.getElementById('hamburger');
+  const navLinks = document.getElementById('navLinks');
+  hamburger.addEventListener('click', () => {
+    navLinks.classList.toggle('open');
+  });
+  navLinks.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', () => navLinks.classList.remove('open'));
+  });
+
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(el => observer.observe(el));
+</script>
+</body>
+</html>

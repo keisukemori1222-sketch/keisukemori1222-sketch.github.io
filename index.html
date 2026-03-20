@@ -354,6 +354,45 @@
       flex-shrink: 0;
     }
 
+    /* SERVICE DETAILS */
+    .service-details {
+      display: flex;
+      gap: 24px;
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px solid rgba(196, 162, 101, 0.15);
+    }
+    .detail-item {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .detail-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      color: var(--gold);
+    }
+    .detail-value {
+      font-family: 'Zen Old Mincho', serif;
+      font-size: 1.05rem;
+      color: var(--washi);
+    }
+
+    /* SECTION CTA */
+    .section-cta {
+      text-align: center;
+      margin-top: 64px;
+      padding-top: 48px;
+      border-top: 1px solid rgba(196, 162, 101, 0.1);
+    }
+    .section-cta-text {
+      font-family: 'Zen Old Mincho', serif;
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+      letter-spacing: 0.05em;
+    }
+
     /* PROFILE */
     #profile { background: rgba(10, 14, 26, 0.6); }
 
@@ -603,6 +642,11 @@
       .flow-steps { flex-direction: column; }
 
       .service-card { padding: 32px 24px; }
+
+      .service-details {
+        flex-direction: column;
+        gap: 16px;
+      }
     }
 
     @media (max-width: 480px) {
@@ -659,7 +703,8 @@
       <em>「頑張っているのに、なぜかうまくいかない」</em><br>
       <em>「一生懸命やっているのに、周りと分かり合えない」</em><br><br>
       組織やチームの中で、そんな行き詰まりを感じたことはないでしょうか。<br>
-      私自身、長い間その問いの中を生きてきました。
+      私自身、組織人事コンサルタントとして10年にわたり多くの企業の組織変革に携わる中で、
+      ずっとその問いと向き合ってきました。
     </p>
 
     <p class="philosophy-text reveal">
@@ -674,7 +719,7 @@
       自分を深く見つめていく中で気づいたのは、
       心の奥底にあった<em>「自分は周りに受け入れられない」</em>という信念でした。
       そしてその信念の裏側にある本当の願いは、
-      「繋がり」「感」「安全」だったのです。
+      「繋がり」「愛」「安全」だったのです。
     </p>
 
     <p class="philosophy-text reveal">
@@ -691,7 +736,7 @@
     <div class="quote-block reveal">
       <p>
         私自身が強さと弱さと想いをさらけ出して生きられる世界を生き、<br>
-        感と相互信頼で駆動する組織にあふれた社会を創造する
+        愛と相互信頼で駆動する組織にあふれた社会を創造する
       </p>
       <cite>── 森 啓亮</cite>
     </div>
@@ -717,6 +762,21 @@
       </p>
       <span class="service-tag">対象：チーム・組織</span>
 
+      <div class="service-details">
+        <div class="detail-item">
+          <span class="detail-label">1セッション</span>
+          <span class="detail-value">60〜90分</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">回数目安</span>
+          <span class="detail-value">全3〜6回</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">実施形式</span>
+          <span class="detail-value">対面 / オンライン</span>
+        </div>
+      </div>
+
       <div class="service-flow">
         <h4>SERVICE FLOW</h4>
         <div class="flow-steps">
@@ -739,6 +799,15 @@
         </div>
       </div>
     </div>
+
+    <div class="section-cta reveal">
+      <p class="section-cta-text">
+        まずは30分の無料オリエンテーションから
+      </p>
+      <a href="mailto:keisuke.mori1222@gmail.com" class="btn-primary">
+        セッションを予約する
+      </a>
+    </div>
   </div>
 </section>
 
@@ -758,8 +827,8 @@
         <p class="profile-bio">
           大手大学受験予備校にて校舎運営・マネジメントに従事した後、
           大手人材グループ企業にて組織人事コンサルタントに転身。
-          働き方改革の推進、人事戦略設計、制度設計、人材開発の領域で
-          幅広いクライアントを支援。<br><br>
+          10年間にわたり、製造業・保険・IT・飲食業界など幅広い業界で
+          人事戦略設計、制度設計、人材開発、エンゲージメント向上を支援。<br><br>
           その後、ベンチャー企業にて組織人事コンサルティング事業の
           立ち上げに第一号社員として参画。<br><br>
           コンサルタントとしてデータ分析と現場対話の両軸で
